@@ -3,6 +3,7 @@ package org.jsp.product_api.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.jsp.product_api.dto.Product;
 import org.jsp.product_api.repository.ProductRepository;
@@ -36,5 +37,87 @@ public class ProductService {
 
 		return new ResponseEntity<Object>(map, HttpStatus.CREATED);
 	}
+
+	public ResponseEntity<Object> fetchAllProducts() {
+		List<Product> list = repository.findAll();
+		if (list.isEmpty()) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("error", "No Products Found");
+
+			return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+		} else {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("message", "Products Found");
+			map.put("data", list);
+
+			return new ResponseEntity<Object>(map, HttpStatus.OK);
+		}
+	}
+
+	public ResponseEntity<Object> fetchById(int id) {
+		Optional<Product> optional = repository.findById(id);
+		if(optional.isEmpty()) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("error", "No Products Found with Id: "+id);
+
+			return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+		}else {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("message", "Products Found");
+			map.put("data", optional.get());
+
+			return new ResponseEntity<Object>(map, HttpStatus.OK);
+		}
+	}
+
+	public ResponseEntity<Object> fetchByName(String name) {
+		List<Product> list = repository.findByName(name);
+		if (list.isEmpty()) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("error", "No Products Found with Name :"+name);
+
+			return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+		} else {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("message", "Products Found");
+			map.put("data", list);
+
+			return new ResponseEntity<Object>(map, HttpStatus.OK);
+		}
+	}
+
+	public ResponseEntity<Object> fetchByPriceGreater(double price) {
+		List<Product> list = repository.findByPriceGreaterThanEqual(price);
+		if (list.isEmpty()) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("error", "No Products Found Price Greater Than: "+price);
+
+			return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+		} else {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("message", "Products Found");
+			map.put("data", list);
+
+			return new ResponseEntity<Object>(map, HttpStatus.OK);
+		}
+	}
+
+	public ResponseEntity<Object> fetchByStockBetween(int min, int max) {
+		List<Product> list = repository.findByStockBetween(min,max);
+		if (list.isEmpty()) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("error", "No Products Found Stock Between: "+min+" and "+max);
+
+			return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+		} else {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("message", "Products Found");
+			map.put("data", list);
+
+			return new ResponseEntity<Object>(map, HttpStatus.OK);
+		}
+	}
+	
+	
 
 }
